@@ -17,10 +17,5 @@ app.listen(port, () => {
 })
 
 //routes
-app.get('/', (reques, response) => {
-    response.json({
-        ok: true,
-        message: 'You did it well'
-    })
-})
+app.use('/api/users', require('./routes/users.routes'));
 
