@@ -11,11 +11,16 @@ dbConnection()
 
 app.use(cors());
 
+//getting and persering body
+app.use(express.json());
+
+//routes
+app.use('/api/users', require('./routes/users.routes'));
+
+
 //port
 app.listen(port, () => {
     console.log('listeing on port', port);
 })
 
-//routes
-app.use('/api/users', require('./routes/users.routes'));
 
