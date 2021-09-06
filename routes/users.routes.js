@@ -3,11 +3,20 @@
  */
 
 const {Router} = require('express');
-const {getUsers, createUser} = require('../controllers/users.controller')
+const { check } = require('express-validator')
+const {getUsers, createUser} = require('../controllers/users.controller');
+const {validateFields} = require('../middlewares/validate-flieds');
+
 const router = Router();
 
 
 router.get('/', getUsers);
-router.post('/', createUser);
+router.post('/', [
+    check('name','name is required').not().isEmpty(),
+    check('lastName','last name is required').not().isEmpty(),
+    check('email','email is required').isEmail(),
+    check('password','password is required').not().isEmpty(),
+    validateFields
+], createUser);
 
 module.exports = router;
