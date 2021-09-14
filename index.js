@@ -11,7 +11,7 @@ dbConnection()
 
 app.use(cors());
 
-//getting and persering body
+//getting and parsering body
 app.use(express.json());
 
 //routes
