@@ -8,6 +8,7 @@ const {
   getUsers,
   createUser,
   updateUser,
+  deleteUser,
 } = require("../controllers/users.controller");
 const { validateFields } = require("../middlewares/validate-flieds");
 
@@ -25,10 +26,10 @@ router.post(
     validateFields,
   ],
   createUser
-  );
-  router.put(
-    "/:id",
-    [
+);
+router.put(
+  "/:id",
+  [
     //middleware which validates that all required fields aren't empty
     check("name", "name is required").not().isEmpty(),
     check("lastName", "last name is required").not().isEmpty(),
@@ -38,4 +39,12 @@ router.post(
   ],
   updateUser
 );
+router.delete(
+  "/:id",
+  [
+
+  ],
+  deleteUser
+);
+
 module.exports = router;

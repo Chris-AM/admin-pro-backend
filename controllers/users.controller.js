@@ -1,4 +1,4 @@
-const { response, } = require("express");
+const { response, request } = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 
@@ -51,49 +51,75 @@ const createUser = async (req, res = response) => {
 const updateUser = async (req = request, res = response) => {
   //TODO: Validate token and check if it's the correct user
   const uid = req.params.id;
-
   try {
-    const updatingUser = await User.findById(uid);
-    if (!updatingUser) {
+
+    const userDB = await User.findById(uid);
+    /*****************************
+      validating if user exisits
+    *****************************/
+    //here if doesn't exist
+    if (!userDB) {
       return res.status(404).json({
         ok: false,
-        msg: "User not found or it does not exisist.",
+        msg: 'id User not found'
       });
     }
-
-    //updating user (not updating password)
-    const {password, google , email, ...fields} = req.body;
-    if (updatingUser.email === email) {
-      delete fields.email;
-    }else{
-        const emailExists = await User.findOne({email});
-        if (emailExists){
-            return res.status(400).json({
-                ok: false,
-                msg: 'Email already taken'
-            })
-        }
+    //here if does
+    const {password, google, email , ...fields} = req.body;
+    //validating if email is already taken
+    if (userDB.email !== email) {
+      const emailAlreadyTaken = await User.findOne({ email });
+      if (emailAlreadyTaken) {
+        res.status(401).json({
+          ok: false,
+          msg: 'email already taken'
+        });
+      }
     }
-    
-
-    const userUpdated = await User.findByIdAndUpdate(uid, fields, {new: true});
-
+    fields.email = email;
+    const updatedUser = await User.findByIdAndUpdate(uid, fields, { new: true })
     res.json({
       ok: true,
-      uid,
-      user: userUpdated,
+      userID: uid,
+      user: updatedUser
     });
   } catch (error) {
-    console.log(error),
-      res.status(500).json({
-        ok: false,
-        msg: "Internal server error. Check logs",
-      });
+    console.log('Internal error, check logs', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Internal Server Error. Check Logs'
+    });
   }
 };
+
+const deleteUser = async (req = request, res = response) => {
+  const uid = req.params.id;
+  try {
+    const dbUser = await User.findById(uid);
+    if (!dbUser) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'user not found'
+      });
+    }
+    await User.findByIdAndDelete(uid)
+    res.json({
+      ok: true,
+      msg: 'droping user',
+      userID: uid
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Internal server error. Check logs'
+    })
+  }
+}
 
 module.exports = {
   getUsers,
   createUser,
   updateUser,
+  deleteUser
 };
