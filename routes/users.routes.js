@@ -34,6 +34,7 @@ router.post(
     check("lastName", "last name is required").not().isEmpty(),
     check("email", "email is required").isEmail(),
     check("role", "role is required").not().isEmpty(),
+    validateFields
   ],
   updateUser
 );
