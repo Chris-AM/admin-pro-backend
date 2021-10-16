@@ -12,11 +12,16 @@ const {
   deleteUser,
 } = require("../controllers/users.controller");
 const { validateFields } = require("../middlewares/validate-flieds");
+const { validateJWT } = require("../middlewares/validate-jwt");
 
 const router = Router();
 
-router.get("/", getUsers);
+router.get("/", 
+  validateJWT,
+  getUsers);
+
 router.get("/:id", getUserById)
+
 router.post(
   "/",
   [
@@ -33,6 +38,7 @@ router.put(
   "/:id",
   [
     //middleware which validates that all required fields aren't empty
+    validateJWT,
     check("name", "name is required").not().isEmpty(),
     check("lastName", "last name is required").not().isEmpty(),
     check("email", "email is required").isEmail(),
