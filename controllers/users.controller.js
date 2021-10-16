@@ -12,6 +12,33 @@ const getUsers = async (req, res) => {
   });
 };
 
+const getUserById = async (req = request, res = response)=>{
+  const uid = req.params.id;
+  try {
+    const user = await User.findById(uid);
+    if (!user) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'id User not found'
+      });
+    }else{
+      res.json({
+        ok: true,
+        msg: "getting users",
+        user,
+      });
+    }
+
+  } catch (error) {
+    console.log('internal server error. Check logs', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Internal server error. Check logs'
+    });
+  }
+
+}
+
 const createUser = async (req, res = response) => {
   const { email, password } = req.body;
 
@@ -38,6 +65,7 @@ const createUser = async (req, res = response) => {
       ok: true,
       msg: "creating user",
       user,
+      
     });
   } catch (error) {
     console.log("error --->", error);
@@ -119,6 +147,7 @@ const deleteUser = async (req = request, res = response) => {
 
 module.exports = {
   getUsers,
+  getUserById,
   createUser,
   updateUser,
   deleteUser

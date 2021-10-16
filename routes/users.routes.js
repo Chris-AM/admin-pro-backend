@@ -6,6 +6,7 @@ const { Router } = require("express");
 const { check } = require("express-validator");
 const {
   getUsers,
+  getUserById,
   createUser,
   updateUser,
   deleteUser,
@@ -15,6 +16,7 @@ const { validateFields } = require("../middlewares/validate-flieds");
 const router = Router();
 
 router.get("/", getUsers);
+router.get("/:id", getUserById)
 router.post(
   "/",
   [
