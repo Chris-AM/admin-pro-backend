@@ -25,13 +25,13 @@ const getUserById = async (req = request, res = response)=>{
     }else{
       res.json({
         ok: true,
-        msg: "getting users",
+        msg: "user found",
         user,
       });
     }
 
   } catch (error) {
-    console.log('internal server error. Check logs', error);
+    console.log('Error -->', error);
     res.status(500).json({
       ok: false,
       msg: 'Internal server error. Check logs'
