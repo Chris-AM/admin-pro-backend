@@ -14,14 +14,20 @@ const { createDoctor,
 const router = Router();
 
 router.get("/",
+    validateJWT,
     getDoctors);
 
 router.get("/:id",
+    validateJWT,
     getDoctorById)
 
 router.post(
     "/",
-    [],
+    [validateJWT,
+    check('name', "Doctor's name is required").not().isEmpty(),
+    check('hospital','Hospital id is required').not().isEmpty(),
+    validateFields
+    ],
     createDoctor
 );
 router.put(
