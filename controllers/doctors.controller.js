@@ -5,6 +5,8 @@ const { generateJWT } = require("../helpers/jwt")
 
 const getDoctors = async (req, res) => {
     const doctors = await Doctor.find({}, "name hospital")
+        .populate('user', 'name image')
+        .populate('hospital', 'name image');
     res.json({
         ok: true,
         msg: 'getting doctors',
@@ -15,15 +17,17 @@ const getDoctors = async (req, res) => {
 const getDoctorById = async (req = request, res = response) => {
     const doctorId = req.params.id;
     try {
-        const doctor = await Doctor.findById(doctorId);
-        if(!doctor){
+        const doctor = await Doctor.findById(doctorId)
+            .populate('user', 'name image')
+            .populate('hospital', 'name image');
+        if (!doctor) {
             return res.status(404).json({
                 ok: false,
                 msg: 'Doctor id not found'
             });
-        }else{
+        } else {
             res.json({
-                ok:true,
+                ok: true,
                 msg: 'Doctor found',
                 doctor
             })
@@ -48,11 +52,11 @@ const createDoctor = async (req = request, res = response) => {
     console.log('uid --> ', uid);
     console.log('hid --->', hospitalid);
     try {
-       const doctorInDb = await doctor.save();
+        const doctorInDb = await doctor.save();
         res.json({
             ok: true,
             msg: 'doctor added',
-           doctor: doctorInDb,
+            doctor: doctorInDb,
 
         });
     } catch (error) {

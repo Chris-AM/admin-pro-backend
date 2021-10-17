@@ -4,7 +4,8 @@ const Hospital = require("../models/hospital.model");
 const { generateJWT } = require("../helpers/jwt")
 
 const getHospitals = async (req, res) => {
-    const hospitals = await Hospital.find({}, "name");
+    const hospitals = await Hospital.find({}, "name")
+        .populate('user', 'name image');
     res.json({
         ok: true,
         msg: 'getting hospitals',
@@ -15,10 +16,11 @@ const getHospitals = async (req, res) => {
 const getHospitalById = async (req = request, res = response) => {
     const hospId = req.params.id;
     try {
-        const hospital = await Hospital.findById(hospId);
+        const hospital = await Hospital.findById(hospId)
+            .populate('user', 'name image');
         if (!hospital) {
             return res.status(404).json({
-                ok:false,
+                ok: false,
                 msg: 'Hospital id not found'
             });
         } else {
