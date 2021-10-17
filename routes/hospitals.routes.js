@@ -21,7 +21,11 @@ getHospitalById)
 
 router.post(
     "/",
-    [],
+    [
+        validateJWT,
+        check('name', 'Hospital name is required').not().isEmpty(),
+        validateFields
+    ],
     createHospital
 );
 router.put(
