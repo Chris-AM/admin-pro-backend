@@ -3,17 +3,25 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 const { generateJWT } = require("../helpers/jwt")
 
-const getUsers = async (req, res) => {
-  const users = await User.find({}, "name lastName email");
+const getUsers = async (req = request, res) => {
+  const from = Number(req.query.from) || 0;
+ 
+  const [users, total] = await Promise.all([
+    User.find({}, "name lastName email google")
+      .skip(from)
+      .limit(5),
+    User.count()
+  ]);
 
   res.json({
     ok: true,
     msg: "getting users",
+    total,
     users,
   });
 };
 
-const getUserById = async (req = request, res = response)=>{
+const getUserById = async (req = request, res = response) => {
   const uid = req.params.id;
   try {
     const user = await User.findById(uid);
@@ -22,7 +30,7 @@ const getUserById = async (req = request, res = response)=>{
         ok: false,
         msg: 'id User not found'
       });
-    }else{
+    } else {
       res.json({
         ok: true,
         msg: "user found",
@@ -68,7 +76,7 @@ const createUser = async (req, res = response) => {
       msg: "creating user",
       user,
       token: jwt
-      
+
     });
   } catch (error) {
     console.log("error --->", error);
@@ -96,7 +104,7 @@ const updateUser = async (req = request, res = response) => {
       });
     }
     //here if does
-    const {password, google, email , ...fields} = req.body;
+    const { password, google, email, ...fields } = req.body;
     //validating if email is already taken
     if (userDB.email !== email) {
       const emailAlreadyTaken = await User.findOne({ email });
@@ -132,13 +140,14 @@ const deleteUser = async (req = request, res = response) => {
         ok: false,
         msg: 'user not found'
       });
+    } else {
+      res.json({
+        ok: true,
+        msg: 'droping user',
+        userID: uid
+      });
+      await User.findByIdAndDelete(uid);
     }
-    await User.findByIdAndDelete(uid)
-    res.json({
-      ok: true,
-      msg: 'droping user',
-      userID: uid
-    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
