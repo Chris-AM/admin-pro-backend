@@ -1,5 +1,6 @@
 const { response, request } = require("express");
 const { v4: uuidv4 } = require('uuid');
+const { updateImage } = require("../helpers/update-image");
 
 const uploadFile = async (req = request, res = response) => {
 
@@ -48,8 +49,9 @@ const uploadFile = async (req = request, res = response) => {
                 ok: false,
                 msg: 'error storaging file'
             });
-        }
-        else {
+        } else {
+            //update bd
+            updateImage(table, id, fileNewName);
             res.json({
                 ok: true,
                 msg: 'File uploaded!',
