@@ -39,6 +39,10 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+*.jpeg
+*.gif
+*.jpg
+*.png
 
 # System Files
 .DS_Store
